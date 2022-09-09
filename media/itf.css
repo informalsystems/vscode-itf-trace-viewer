@@ -1,0 +1,51 @@
+#main-table {
+	border: 1px solid var(--vscode-panelTitle-activeBorder);
+    border-radius:6px;
+}
+
+.multiple-states {
+    border-collapse: collapse;
+}
+
+.multiple-states > tbody > tr > td {
+    border: 1px solid #aaa;
+    padding: 2px;
+}
+
+td {
+    vertical-align: top;
+}
+
+td.varName,
+th.varName {
+    color: var(--vscode-textForeground);
+    background-color: var(--vscode-editor-selectionBackground);
+    font-weight: bold;
+    padding: 4px;
+}
+
+.differentKeys {
+	border: 1px solid violet;
+}
+
+.prevIsDifferent {
+	border: 1px solid red;
+}
+
+.newElement {
+	border: 1px solid green;
+}
+
+#control {
+    min-height: 35px;
+}
+
+.button {
+    width: 100px;
+    float: right;
+    margin-right: 4px;
+}
+
+input[name="init"] {
+    margin-left: 40px;
+}
