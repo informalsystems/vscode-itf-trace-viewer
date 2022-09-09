@@ -15,3 +15,9 @@ formatted tables.
     - Green for new elements that don't exist in the previous state.
 - Filter by variables: select which variables you want to hide or show.
 - Hide or show the initial state (hidden by default).
+
+## Manual installation
+
+1. Press `cmd/crtl+shift+P` for the command pallete.
+2. Type "Extensions: Install from VSIX...".
+3. Select the file [build/itf-trace-viewer-0.0.3.vsix](build/itf-trace-viewer-0.0.3.vsix) provided in this repo.
