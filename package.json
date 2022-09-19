@@ -8,8 +8,12 @@
 		"email": "hernan@informal.systems",
 		"url": "https://github.com/hvanz"
 	},
-	"publisher": "informal.systems",
-	"repository": "https://github.com/informalsystems/vscode-itf-trace-view",
+	"publisher": "informal",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/informalsystems/vscode-itf-trace-viewer"
+	},
+	"icon": "images/icon.png",
 	"engines": {
 		"vscode": "^1.70.0"
 	},
