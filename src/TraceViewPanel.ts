@@ -172,9 +172,15 @@ export class TraceViewPanel {
     }
 
     private _makeBottomBar() {
-        const description = this._trace!["#meta"].description
-            .replace("Apalache", `<a href="https://apalache.informal.systems/">Apalache</a>`);
-        return `<div>${description}</div>`;
+        var content = "";
+        const meta = this._trace!["#meta"];
+        if (meta){
+            const description = this._trace!["#meta"].description;
+            if (description) {
+                content = description.replace("Apalache", `<a href="https://apalache.informal.systems/">Apalache</a>`);
+            }    
+        }
+        return `<div>${content}</div>`;
     }
 
     private _makeHtmlForWebview(webview: vscode.Webview) {
