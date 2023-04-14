@@ -2,7 +2,7 @@
 	"name": "itf-trace-viewer",
 	"displayName": "ITF Trace Viewer",
 	"description": "View nicely formatted ITF trace files",
-	"version": "0.0.3",
+	"version": "0.0.5",
 	"author": {
 		"name": "Hernán Vanzetto",
 		"email": "hernan@informal.systems",
