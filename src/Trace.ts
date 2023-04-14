@@ -27,8 +27,17 @@ interface MapObject<S, T> {
     "#map": Array<[S, T]>;
 }
 
-interface SetObject<T> {
+// Generic list representing a set or a tuple
+interface ListObject<T> {
+    [key: string]: Array<T>;
+}
+
+interface SetObject<T> extends ListObject<T> {
     "#set": Array<T>;
+}
+
+interface TupleObject<T> extends ListObject<T> {
+    "#tup": Array<T>;
 }
 
 export enum ViewMode {
@@ -37,9 +46,9 @@ export enum ViewMode {
 }
 
 export function toHtml(
-    trace: Trace, 
-    selectedVariables: string[], 
-    showInitialState: boolean, 
+    trace: Trace,
+    selectedVariables: string[],
+    showInitialState: boolean,
     viewMode: ViewMode = ViewMode.SingleTable
 ) {
     if (viewMode === ViewMode.SingleTable) {
@@ -144,7 +153,9 @@ function tlaToHtml(value: any, prevValue: any): [string, boolean] {
         if (Object.keys(value).length === 1 && Object.keys(value).includes("#map")) {
             return mapToHtml(value as MapObject<any, any>, prevValue as MapObject<any, any>);
         } else if (Object.keys(value).length === 1 && Object.keys(value).includes("#set")) {
-            return setToHtml(value as SetObject<any>, prevValue as SetObject<any>);
+            return listToHtml(value as SetObject<any>, prevValue as SetObject<any>, "#set", (x) => `{${x}}`);
+        } else if (Object.keys(value).length === 1 && Object.keys(value).includes("#tup")) {
+            return listToHtml(value as TupleObject<any>, prevValue as TupleObject<any>, "#tup", (x) => `&#9001;${x}&#9002;`);
         } else {
             return objectToHtml(value, prevValue);
         }
@@ -233,22 +244,27 @@ function mapToHtml<S, T>(m: MapObject<S, T>, prev: MapObject<S, T>): [string, bo
     return [`[<table>${rows.join("\n")}</table>]`, isEqualToPrev];
 }
 
-function setToHtml<T>(s: SetObject<T>, prev?: SetObject<T>): [string, boolean] {
-    var prevSet: Array<T> | undefined = undefined;
-    if (prev !== undefined && "#set" in prev) {
-        prevSet = prev["#set"].sort();
+function listToHtml<T>(
+    list: ListObject<T>,
+    prev: ListObject<T>,
+    tagName: "#set" | "#tup",
+    wrapper: (_: string) => string,
+): [string, boolean] {
+    var prevList: Array<T> | undefined = undefined;
+    if (prev !== undefined && tagName in prev) {
+        prevList = prev[tagName].sort();
     }
 
     var isEqualToPrev = true;
-    let elems = s["#set"].sort()
+    let elems = list[tagName].sort()
         .map((v, i) => {
             var elemClass = "";
-            if (!prevSet?.includes(v)) {
+            if (!prevList?.includes(v)) {
                 elemClass = "newElement";
                 isEqualToPrev = false;
             }
 
-            let prevValue = getElement(prevSet, i);
+            let prevValue = getElement(prevList, i);
             if (typeof prevValue !== 'object' && v !== prevValue) {
                 elemClass = "prevIsDifferent";
                 isEqualToPrev = false;
@@ -258,5 +274,5 @@ function setToHtml<T>(s: SetObject<T>, prev?: SetObject<T>): [string, boolean] {
 
             return `<span class="${elemClass}">${html}</span>`;
         });
-    return [`<span>{${elems.join(", ")}}</span>`, isEqualToPrev];
+    return [`<span>${wrapper(elems.join(", "))}</span>`, isEqualToPrev];
 }
