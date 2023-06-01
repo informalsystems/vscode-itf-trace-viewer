@@ -12,6 +12,11 @@
     padding: 2px;
 }
 
+thead th {
+    position: sticky;
+    top: 0px;
+}
+
 td {
     vertical-align: top;
 }
