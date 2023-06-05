@@ -12,9 +12,11 @@ export class TraceViewPanel {
     private readonly _extensionUri: vscode.Uri;
     private _disposables: vscode.Disposable[] = [];
     private _trace?: Trace = undefined;
-    private _viewMode: ViewMode = ViewMode.ChainedTables;
+    private _viewMode?: ViewMode = undefined;
     private _selectedVariables: string[] = [];
     private _showInitialState: boolean = false;
+
+    private static outputChannel = vscode.window.createOutputChannel("ITF Trace Viewer");
 
     public static createOrShow(extensionUri: vscode.Uri) {
         if (TraceViewPanel.currentPanel) {
@@ -42,6 +44,8 @@ export class TraceViewPanel {
         const filePath = vscode.window.activeTextEditor?.document.fileName;
         const baseName = path.parse(filePath).base;
         const title = `View ${baseName}`;
+
+        this.outputChannel.appendLine(`name: ${baseName}`);
 
         const panel = vscode.window.createWebviewPanel(
             TraceViewPanel.viewType,
@@ -73,9 +77,24 @@ export class TraceViewPanel {
         TraceViewPanel.currentPanel = new TraceViewPanel(panel, extensionUri);
     }
 
+    private static _getDefaultViewMode() {
+        console.log("_getDefaultViewMode");
+        var mode = undefined;
+        switch (vscode.workspace.getConfiguration("itf-trace-viewer").get("viewFormat")) {
+            case "table": mode = ViewMode.SingleTable;
+            case "chain": mode = ViewMode.ChainedTables;
+            default: mode = ViewMode.SingleTable;
+        }
+        TraceViewPanel.outputChannel.appendLine(`View mode: ${mode}`);
+        TraceViewPanel.outputChannel.show();
+        return mode;
+    }
+
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
         this._panel = panel;
         this._extensionUri = extensionUri;
+
+        this._viewMode = TraceViewPanel._getDefaultViewMode();
 
         // Set the webview's initial html content
         this._update();
@@ -157,7 +176,7 @@ export class TraceViewPanel {
             let checked = selectedVariables.includes(v) ? 'checked' : '';
             return `<label><input type="checkbox" name="vars" value="${v}" ${checked}>${v}</label>`;
         });
-        let vars = `<span>Variables: ${cells.join("\n")}</span>`;
+        let vars = `<div id="variables">Variables: ${cells.join("\n")}</div>`;
         let showInitialState = `<label><input type="checkbox" name="init"
             ${this._showInitialState ? 'checked' : ''}>
             Show initial state
@@ -174,11 +193,11 @@ export class TraceViewPanel {
     private _makeBottomBar() {
         var content = "";
         const meta = this._trace!["#meta"];
-        if (meta){
+        if (meta) {
             const description = this._trace!["#meta"].description;
             if (description) {
                 content = description.replace("Apalache", `<a href="https://apalache.informal.systems/">Apalache</a>`);
-            }    
+            }
         }
         return `<div>${content}</div>`;
     }

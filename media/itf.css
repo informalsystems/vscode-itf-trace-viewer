@@ -1,3 +1,12 @@
+#variables {
+    max-width: 700px;
+    white-space: normal;
+}
+
+#switch-view-button {
+    float: inline-end;
+}
+
 #main-table {
 	border: 1px solid var(--vscode-panelTitle-activeBorder);
     border-radius:6px;
@@ -7,14 +16,29 @@
     border-collapse: collapse;
 }
 
+.first-column {
+    position: sticky;
+    left: 0px;
+    border: 1px solid #aaa;
+    padding: 2px;
+    /* z-index: 2; */
+}
+
 .multiple-states > tbody > tr > td {
     border: 1px solid #aaa;
     padding: 2px;
 }
 
-thead th {
+table thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+
+table thead th {
     position: sticky;
     top: 0px;
+    z-index: 1;
 }
 
 td {
@@ -29,8 +53,30 @@ th.varName {
     padding: 4px;
 }
 
-.differentKeys {
-	border: 1px solid violet;
+table.map {
+    border-collapse: collapse;
+}
+
+div.map {
+    border-color: #aaa;
+    border-color: var(--vscode-textForeground);
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 4px;
+    border-top: 0px;
+    border-bottom: 0px;
+    border-right: 0px;
+    padding: 1px;
+}
+
+table.object {
+    padding: 3px;
+}
+
+span.arrayElem {
+    padding: 2px;
+    display: inline-block;
+    white-space: normal;
 }
 
 .prevIsDifferent {
@@ -39,6 +85,11 @@ th.varName {
 
 .newElement {
 	border: 1px solid green;
+}
+
+.hasLessElements {
+	border: 1px solid orange;
+    padding: 2px;
 }
 
 #control {

@@ -2,7 +2,7 @@
 	"name": "itf-trace-viewer",
 	"displayName": "ITF Trace Viewer",
 	"description": "View nicely formatted ITF trace files",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"author": {
 		"name": "Hernán Vanzetto",
 		"email": "hernan@informal.systems",
@@ -20,9 +20,14 @@
 	"categories": [
 		"Visualization"
 	],
+	"keywords": [
+		"trace",
+		"model",
+		"apalache",
+		"quint"
+	],
 	"activationEvents": [
 		"onLanguage:itf",
-		"onCommand:itf-trace-viewer.viewFormattedTrace",
 		"onWebviewPanel:itf-trace-viewer"
 	],
 	"main": "./dist/extension.js",
@@ -76,6 +81,19 @@
 					"group": "navigation"
 				}
 			]
+		},
+		"configuration": {
+			"title": "View Mode",
+			"properties": {
+				"itf-trace-viewer.viewFormat": {
+					"type": [
+						"string",
+						"null"
+					],
+					"default": "table",
+					"description": "Specifies the default view mode: table (default) or chain."
+				}
+			}
 		}
 	},
 	"scripts": {
