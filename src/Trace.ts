@@ -75,6 +75,18 @@ function getTupleContent<T>(m?: TupleObject<T>): Array<T> | undefined {
     return m !== undefined && "#tup" in m ? m["#tup"] : undefined;
 }
 
+interface BigintObject extends Object {
+    "#bigint": string;
+}
+
+function isBigintObject(a: any): boolean {
+    return Object.keys(a).length === 1 && Object.keys(a).includes("#bigint");
+}
+
+function getBigintContent<T>(m?: BigintObject): string | undefined {
+    return m !== undefined && "#bigint" in m ? m["#bigint"] : undefined;
+}
+
 export enum ViewMode {
     SingleTable = "table",
     ChainedTables = "chain",
@@ -227,6 +239,8 @@ function tlaToHtml(value: any, prevValue?: any): string {
             return arrayToHtml((x) => `{&nbsp;${x}&nbsp;}`, getSetContent(value), getSetContent(prevValue));
         } else if (isTupleObject(value)) {
             return arrayToHtml((x) => `&#9001;&nbsp;${x}&nbsp;&#9002;`, getTupleContent(value), getTupleContent(prevValue));
+        } else if (isBigintObject(value)) {
+            return String(getBigintContent(value));
         } else {
             return objectToHtml(value, prevValue);
         }
