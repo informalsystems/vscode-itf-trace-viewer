@@ -16,7 +16,7 @@ export class TraceViewPanel {
     private _selectedVariables: string[] = [];
     private _showInitialState: boolean = false;
 
-    private static outputChannel = vscode.window.createOutputChannel("ITF Trace Viewer");
+    // private static outputChannel = vscode.window.createOutputChannel("ITF Trace Viewer");
 
     public static createOrShow(extensionUri: vscode.Uri) {
         if (TraceViewPanel.currentPanel) {
@@ -45,7 +45,7 @@ export class TraceViewPanel {
         const baseName = path.parse(filePath).base;
         const title = `View ${baseName}`;
 
-        this.outputChannel.appendLine(`name: ${baseName}`);
+        // this.outputChannel.appendLine(`name: ${baseName}`);
 
         const panel = vscode.window.createWebviewPanel(
             TraceViewPanel.viewType,
@@ -85,8 +85,8 @@ export class TraceViewPanel {
             case "chain": mode = ViewMode.ChainedTables;
             default: mode = ViewMode.SingleTable;
         }
-        TraceViewPanel.outputChannel.appendLine(`View mode: ${mode}`);
-        TraceViewPanel.outputChannel.show();
+        // TraceViewPanel.outputChannel.appendLine(`View mode: ${mode}`);
+        // TraceViewPanel.outputChannel.show();
         return mode;
     }
 
