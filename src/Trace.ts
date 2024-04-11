@@ -75,6 +75,19 @@ function getTupleContent<T>(m?: TupleObject<T>): Array<T> | undefined {
     return m !== undefined && "#tup" in m ? m["#tup"] : undefined;
 }
 
+interface SumObject {
+    "tag": String;
+    "value": Object;
+}
+
+function isSumObject(a: any): boolean {
+    return Object.keys(a).length === 2 && Object.keys(a).includes("tag") && Object.keys(a).includes("value");
+}
+
+function getSumContent(s?: SumObject): [String, Object] | undefined {
+    return s !== undefined && ("tag" in s && "value" in s) ? [s["tag"],s["value"]] : undefined;
+}
+
 interface BigintObject extends Object {
     "#bigint": string;
 }
@@ -129,6 +142,8 @@ function hasElementsNotIn(a: any, b: any): boolean {
             return hasElementsNotInArray(getSetContent(a), getSetContent(b));
         } else if (isTupleObject(a) && isTupleObject(b)) {
             return hasElementsNotInArray(getTupleContent(a), getTupleContent(b));
+        } else if (isSumObject(a) && isSumObject(b)) {
+            return hasElementsNotIn(getSumContent(a)![1], getSumContent(b)![1]);
         } else {
             return hasElementsNotInArray(Object.keys(a), Object.keys(b));
         }
@@ -239,6 +254,8 @@ function tlaToHtml(value: any, prevValue?: any): string {
             return arrayToHtml((x) => `{&nbsp;${x}&nbsp;}`, getSetContent(value), getSetContent(prevValue));
         } else if (isTupleObject(value)) {
             return arrayToHtml((x) => `&#9001;&nbsp;${x}&nbsp;&#9002;`, getTupleContent(value), getTupleContent(prevValue));
+        } else if (isSumObject(value)) {
+            return sumToHtml(value, prevValue);
         } else if (isBigintObject(value)) {
             return String(getBigintContent(value));
         } else {
@@ -294,6 +311,44 @@ function objectToHtml(obj?: object, prev?: object): string {
 
     const objectClass = sameKeys ? "" : "prevIsDifferent";
     return `<table class="object ${objectClass}">${rows.join("\n")}</table>`;
+}
+
+function sumToHtml(obj?: SumObject, prev?: SumObject): string {
+    if (obj === undefined) {
+        return "";
+    }
+    let tag = obj["tag"]
+    const sameTags = prev !== undefined && tag == prev["tag"];
+    
+    let value = obj["value"]
+    let prevValue = prev !== undefined ? getProperty(prev, "value") : value;
+
+    let tagClass = "";
+    let valueClass = "";
+    if (sameTags) {
+        if (prevValue === undefined) {
+            tagClass = "newElement";
+            prevValue = value; // don't look for differences in the rest
+        } else if (!deepEqual(value, prevValue)) {
+            valueClass = "prevIsDifferent";
+            prevValue = value; // don't look for differences in the rest
+        }
+    }
+
+    let tagHtml = `<span class="${tagClass}">${tag}</span>`;
+    let html = "";
+    if (isTupleObject(value) && (value as TupleObject<any>)["#tup"].length == 0) {
+        html = tagHtml;
+    } else if (isTupleObject(value) && (value as TupleObject<any>)["#tup"].length > 0) {
+        let valueHtml = `<span class="${valueClass}">${arrayToHtml((x) => `${x}`, getTupleContent((value as TupleObject<any>)), getTupleContent(prevValue))}</span>`;
+        html = `${tagHtml}(${valueHtml})`
+    } else {
+        let valueHtml = `<span class="${valueClass}">${tlaToHtml(value, prevValue)}</span>`;
+        html = `${tagHtml}(${valueHtml})`
+    }
+
+    const objectClass = sameTags ? "" : "prevIsDifferent";
+    return `<div class="object ${objectClass}">${html}</div>`;
 }
 
 function mapContentToHtml<S, T>(map_?: MapContent<S, T>, prev?: MapContent<S, T>): string {

@@ -2,6 +2,10 @@
 
 <!-- Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file. -->
 
+## [0.0.6] - 2023.11.13
+### Added
+- Support `bigint` and sum-types expressions
+
 ## [0.0.5] - 2023.4.19
 ### Added
 - Display tuples expressions (#2)
